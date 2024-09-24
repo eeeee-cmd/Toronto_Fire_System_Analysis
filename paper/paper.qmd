@@ -1,0 +1,90 @@
+---
+title: "Fire Safety Systems in Mitigating Fire Incidents"
+subtitle: "Assessing the Impact of Alarms and Sprinklers on Fire Containment, Evacuation, and Loss Reduction"
+author: 
+  - Deyi Kong
+thanks: "Code and data are available at: https://open.toronto.ca/dataset/fire-incidents/"
+date: today
+date-format: long
+abstract: "This study investigates the role of fire safety systems, specifically fire alarms and sprinkler systems, in mitigating the effects of fire incidents across Toronto. By analyzing data from the Ontario Fire Marshal (OFM) dataset, we assess how these systems impact evacuation success, fire containment, and the reduction property loss. Our analysis demonstrates that fire safety systems significantly improve outcomes in fire incidents."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+```
+
+
+# Introduction
+Fire incidents are a persistent threat to urban safety, causing significant damage to property, loss of life, and injury. Fire safety systems, such as fire alarms and sprinklers, are fundamental components of fire prevention and response strategies in urban areas. These systems play a critical role in early detection, containment, and evacuation during fire incidents. Despite the presence of these systems, the extent to which they reduce the severity of fire-related outcomes varies, prompting a closer examination of their actual effectiveness.
+
+This study focuses on analyzing data from Toronto's fire incidents to evaluate how fire alarms and sprinklers influence key outcomes such as property loss, fire containment, and evacuation success. Using data provided by the Ontario Fire Marshal (OFM), we examine variables such as the area of fire origin, ignition source, response times, and the presence of fire safety systems. By exploring these relationships, we aim to provide a clearer picture of how these systems contribute to minimizing the damage caused by fire incidents.
+
+We use @citeR and @opendatatoronto.
+
+The remainder of this paper is structured as follows. @sec-data comprehensively discusses the source, context, and structure of the data used, including detailed descriptions of the key variables analyzed. This section also includes tables and graphs to visualize the data. @sec-discussion interprets the results of our analysis, drawing conclusions about the impact of fire safety systems on fire incidents in Toronto. Based on our findings, we offer recommendations for improving fire safety practices and policies, particularly regarding the installation and maintenance of fire alarms and sprinkler systems.
+
+
+
+# Data {#sec-data}
+
+The data used in this study is provided by the Toronto Fire Service (TFS) and aggregated by the Ontario Fire Marshal (OFM) from Janurary 1, 2011 to December 31, 2023. This dataset includes detailed information on fire incidents to which TFS responded, covering various aspects such as fire origin, alarm and sprinkler system operation, and financial loss. 
+Some of our data is of penguins (@fig-fire), from @opendatatoronto
+
+```{r}
+#| label: fig-fire
+#| fig-cap: Bills of penguins
+#| echo: false
+
+data |> 
+  ggplot(aes(x = TFS_Duration, y = estimated_dollar_loss)) +
+  geom_point()
+
+```
+
+Still working on the rest of paper.....
+
+And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+
+
+
+
+# Discussion {#sec-discussion}
+
+## First discussion point {#sec-first-point}
+
+If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+
+## Second discussion point
+
+## Third discussion point
+
+## Weaknesses and next steps
+
+Weaknesses and next steps should also be included.
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+
+
+# Additional data details
+
+
+
+\newpage
+
+
+# References
+
+
