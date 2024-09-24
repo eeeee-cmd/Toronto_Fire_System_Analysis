@@ -1,8 +1,8 @@
-# Starter folder
+# The Role of Fire System in Toronto Analysis (2011-2023)
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
+This repo contains the code and final report for the empirical analysis of fire incidents in Toronto, focusing on the role of fire safety systems such as fire alarms and sprinklers. The analysis covers data from fire incidents reported by the Ontario Fire Marshal (OFM) in opendatatoronto up to December 31, 2023. The study examines how the presence and effectiveness of fire safety systems influence key outcomes such as property damage, fire containment, and evacuation success. The goal is to assess whether fire alarms and sprinklers consistently reduce the severity of fire incidents and improve safety across various scenarios.
 
 
 ## File Structure
@@ -18,7 +18,7 @@ The repo is structured as:
 
 
 ## Statement on LLM usage
-
+Portions of the code in the paper were assistance with ChatGPT-4o.
 Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
 
 ## Some checks
