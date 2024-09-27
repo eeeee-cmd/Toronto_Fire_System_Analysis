@@ -214,15 +214,6 @@ To enhance the robustness of future research, several steps can be taken:
 
 In conclusion, while this study provides a valuable foundation for understanding the impact of fire safety systems on urban fire incidents, addressing these weaknesses and pursuing these next steps will further enhance our understanding and guide effective policy-making in urban fire safety.
 
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
 
 
 \newpage
