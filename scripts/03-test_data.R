@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Sanity check of the data
 # Author: Deyi Kong
-# Date: 23 September 2024
+# Date: 27 September 2024
 # Contact: deyi.kong@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: Need to have simulated data
@@ -20,4 +20,4 @@ data$estimated_dollar_loss |> min() <= 0
 
 # Test for NAs
 all(is.na(data$estimated_dollar_loss))
-
+all(is.na(data$fire_alarm_system))

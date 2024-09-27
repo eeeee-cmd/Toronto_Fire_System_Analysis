@@ -5,7 +5,7 @@ author:
 thanks: "Code and data are available at: https://github.com/eeeee-cmd/Toronto_Fire_System_Analysis.git"
 date: today
 date-format: long
-abstract: "This study investigates the role of fire safety systems, specifically fire alarms and sprinkler systems, in mitigating the effects of fire incidents across Toronto. By analyzing data from the Ontario Fire Marshal (OFM) dataset, we assess how these systems impact evacuation success, fire containment, and the reduction property loss. Our analysis demonstrates that fire safety systems significantly improve outcomes in fire incidents."
+abstract: "This study investigates the role of fire safety systems, specifically fire alarms and sprinkler systems, in mitigating the effects of fire incidents across Toronto. There are over a thousand fire incidents each year in Toronto, which suffers significant property damage and risk to human life. By analyzing data from the Ontario Fire Marshal (OFM) between 2011 and 2023, we assess how these systems impact evacuation success and the reduction of property loss. Our analysis demonstrates that fire safety systems significantly improve outcomes in fire incidents"
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -24,108 +24,195 @@ data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
 
 
 # Introduction
-“It was like watching molten lava move through the building,” Aronson remembers. “Just a huge blob of fire that flowed and flowed” [@nytimes]. Fire incidents are a persistent threat to urban safety, causing significant damage to property, loss of life, and injury. Effective fire protection measures have played a crucial role in mitigating the impact of these incidents [@firesystemsnet]. Fire safety systems, such as fire alarms and sprinklers, are fundamental components of fire prevention and response strategies in urban areas. Most fatal fires occur at night when people are sleeping, a working smoke alarm will detect smoke and sound to alert you [@oafc]. Sprinkler systems are silent protectors against the threat of fires in buildings and spaces [@origincause]. These systems play a critical role in early detection, containment, and evacuation during fire incidents.
+“It was like watching molten lava move through the building,” Aronson remembers. “Just a huge blob of fire that flowed and flowed” [@nytimes]. Fire incidents pose threats to urban safety, causing  property damage, injury, and loss of life. As cities like Toronto experience over a thousand fire incidents annually, effective fire safety systems are crucial to minimizing these impacts. Effective fire protection measures have played a crucial role in mitigating the impact of these incidents [@firesystemsnet]. Most fatal fires occur at night when people are sleeping, a working smoke alarm will detect smoke and sound to alert you [@oafc]. Sprinkler systems are silent protectors against the threat of fires in buildings and spaces [@origincause]. While these systems are widely implemented, questions remain about how these systems specifically influence outcomes such as property loss, fire containment, and successful evacuation. 
 
-Toronto Fire Services is the City’s only all hazards emergency response organization with an emphasis on quality services, efficiency, effectiveness, and safety [@TFS]. This study focuses on analyzing data from Toronto's fire incidents to evaluate how fire alarms and sprinklers influence key outcomes such as property loss, fire containment, and evacuation success. Using data provided by the Ontario Fire Marshal (OFM), we examine variables such as the area of fire origin, ignition source, response times, and the presence of fire safety systems. By exploring these relationships, we aim to provide a clearer picture of how these systems contribute to minimizing the damage caused by fire incidents.
+Toronto Fire Services is the City’s only all hazards emergency response organization with an emphasis on quality services, efficiency, effectiveness, and safety [@TFS]. This study focuses on analyzing data from Toronto's fire incidents between 2011 and 2023 to evaluate how fire alarms and sprinklers influence key outcomes such as property loss, fire containment, and evacuation success. Using data provided by the Ontario Fire Marshal (OFM), we examine variables such as the area of fire origin, estimatded property loss, response times, and the presence of fire safety systems. By exploring these relationships, we aim to provide a clearer picture of how these systems contribute to minimizing the damage caused by fire incidents.
+
+The findings of this study have important implications for urban fire safety policies and building regulations. Understanding the real-world effectiveness of fire alarms and sprinkler systems can inform better safety practices, guiding future regulations for the installation and maintenance of such systems in residential and commercial buildings. The remainder of this paper is structured as follows: In @sec-data, we provide an overview of the data and methodology used in the analysis in @sec-raw; second, we present the key results and summary in @sec-clean; and finally, we discuss the policy implications of these findings and suggest areas for future research in @sec-discussion.
 
 
 # Data {#sec-data}
 
-## Raw Data
+## Raw Data {#sec-raw}
+
 The data used in this paper is derived from Open Data Toronto and is read into this paper through the opendatatoronto library [@opendatatoronto]. All data were processed and analyzed using R [@citeR], associating with Libraries tidyverse [@tidyverse], janitor [@janitor], knitr [@knitr], dplyr [@dplyr], and lubridate [@lubridate]. Graphics were made using ggplot2 [@ggplot].
 
-Fire Incidents data used in the paper is provided by the Toronto Fire Service (TFS) and aggregated by the Ontario Fire Marshal (OFM) from Janurary 1, 2011 to December 31, 2023; covering 32000 observations of 43 variables. It tracks the date of the incident, the location to the nearest intersection, the ward in which the incident took place, the time TFS was alerted to the fire and the time TFS arrived at the scene. The dataset records the area of origin, building status, business impact, casualties, estimated dollar loss, time stamps for each actions (notified, arrived, controled), and whether there was a working alarm and sprinkler on site.
+Fire Incidents data used in the paper is provided by the Toronto Fire Service (TFS) and aggregated by the Ontario Fire Marshal (OFM) from Janurary 1, 2011 to December 31, 2023; covering 32000 observations of 43 variables. The dataset tracks the area of origin, building status, business impact, casualties, estimated dollar loss, time stamps for each actions (notified, arrived, controlled), and whether there was a working alarm and sprinkler on site. Incidents with incomplete data may be under investigation or is classified as a no loss outdoor fire.
 
-For privacy purposes personal information is not provided and exact address have been aggregated to the nearest major or minor intersection. Some incidents have been excluded pursuant to exemptions under Section 8 of Municipal Freedom of Information and Protection of Privacy Act (MFIPPA). Incidents with incomplete data may be under investigation or is classified as a no loss outdoor fire.
+## Cleaned Data {#sec-clean}
 
-## Cleaned Data
+In the analysis, the data being utilized are within the time range from Jan.1, 2011 to Dec.31, 2023. Due to the high redundancy of the raw data containing variables such as id and generated incident numbers, this paper simply drops all the irrelevant features. The remaining features in the study are area of fire origin, estimated loss, casualties, extent of fire, ignition source, fire alarm system, sprinkler system, smoke alarm system, and status of fire. This paper replaced some of the numeric data points containing missing values "NA" by 0, then the remaining entries that has no determinations were dropped to simplify the analysis procedure. 
 
-In the analysis, the data being utilized are within the time range of 2018 to 2023.
-There are several new feature created due to a more effective relation with the time stamps. TFS_duration variable measures the time spent by TFS to control the fire. TFS_Notified_Till_Arrival measures the time spent by TFS to get to the incident once received the alarm. Here is a quick look of the dataset:
+There are several new feature created for a more effective relation with the time stamps. The new features, year and month, were extracted by the date of each fire incident happens. TFS_duration variable measures the time spent by TFS to control the fire. TFS_Notified_Till_Arrival measures the time spent by TFS to get to the incident once received the alarm. 
+Here is a quick look of the data set:
 
 ```{r}
 #| echo: false
 #| tbl-cap: "Column descriptions of selected data"
 glimpse(data)
 ```
+Figure @fig-fireseason shows a set of bar charts of the number of fire incidents happened in each year separate by seasons and filled with fire status. This paper assumed winter from December to February, every season rotates with a cycle of 3. There is an interesting observation such that fire incidents were potentially higher in the Spring than other seasons; and half of the fire incidents were luckily extinguished before TFS takes control or smoke only. In addition, the total fire incidents amount went down significantly in current five years (2019 - 2023) comparing to previous year (2011 - 2018).
 
 ```{r}
-#| warning: false
+#| label: fig-fireseason
+#| fig-cap: Distribution of incidents in each seasons with respect years by fire status
 #| echo: false
-#| label: tbl-column
-#| tbl-cap: "Column descriptions of selected data"
 
-# Generate a table to display columns and description
-description_table <- tibble(
-  Variable = c("area_of_origin", "estimated_dollar_loss", "final_incident_type", "fire_alarm_system_impact_on_evacuation", "fire_alarm_system_presence", "ignition_source", "smoke_alarm_impact_on_persons_evacuating_impact_on_evacuation", "sprinkler_system_presence", "status_of_fire_on_arrival", "fire_under_control_time", "tfs_alarm_time", "tfs_arrival_time"),
-  Description = c(
-    "OFM Area of Origin code and description",
-    "Estimated Dollar Loss",
-    "Final incident type",
-    "OFM Fire Alarm System Impact on Evacuation code and description",
-    "OFM Fire Alarm System Presence code and description",
-    "OFM Ignition Source code and description",
-    "OFM Smoke Alarm Impact on Persons Evacuating Impact on Evacuation code and description",
-    "OFM Sprinkler System Presence code and description",
-    "OFM Status of Fire On Arrival code and description",
-    "Timestamp of fire under control",
-    "Timestamp of when TFS was notified of the incident",
-    "Timestamp of first arriving unit to incident"
-  )
-)
-
-kable(description_table, col.names = c("Variables", "Descriptions"))
-```
-
-```{r}
-#| label: fig-fire
-#| fig-cap: Distribution of incidents in each year by fire status
-#| echo: false
+new_labels <- 
+  c("0" = "Spring", "1" = "Summer",
+    "2" = "Autumn", "3" = "Winter")
 
 data |> 
   ggplot(mapping = aes(x = year, fill = status_of_fire_on_arrival)) +
   geom_bar() +
-  labs(x = "Year", y = "Number of Fire Incidents", fill = "Fire Status when Arrived") +
+  labs(
+    x = "Year", 
+    y = "Number of Fire Incidents", 
+    fill = "Fire Status when Arrived"
+    ) +
+  facet_wrap(
+    vars(month),
+    scales = "free",
+    labeller = labeller(month = new_labels)
+  ) +
+  guides(x = guide_axis(angle = 90)) +
   # Ensure all years are shown
   scale_x_continuous(breaks = seq(min(data$year, na.rm = TRUE), max(data$year, na.rm = TRUE), by = 1)) + 
   # Shorten descriptions
-  scale_fill_discrete(labels = c(
-                      "Extinguished",     # 1
-                      "No Evidence",      # 2
-                      "Smoke Only",       # 3
-                      "Small Flames",     # 4
-                      "Large Flames",     # 5
-                      "Fully Involved",   # 7
-                      "Exposure",         # 8
-                      "Unclassified"      # 9
-                      )) +  
+  scale_fill_manual(
+    values = RColorBrewer::brewer.pal(n = 8, name = "YlOrRd"),  # Specify colors
+    labels = c(
+      "Extinguished",     # 1
+      "No Evidence",      # 2
+      "Smoke Only",       # 3
+      "Small Flames",     # 4
+      "Large Flames",     # 5
+      "Fully Involved",   # 7
+      "Exposure",         # 8
+      "Unclassified"      # 9
+                )) +  
+  theme_dark() +
   theme(legend.position = "bottom",
-  legend.key.size = unit(0.1, 'cm')               # Adjust legend key size
+        legend.text = element_text(size = 8),
+        legend.key.size = unit(0.1, 'cm')               # Adjust legend key size
   )
 ```
 
+The bar graph @fig-fireloss(a) shows the total estimated property loss due to fire incidents for each year from 2011 to 2023. The chart highlights fluctuations in loss over the years, with certain periods showing peaks, possibly due to a few large-scale incidents, followed by a general decline in recent years. This may be indicative of the effectiveness of fire safety systems in reducing the financial damage caused by fires. The bar graph @fig-fireloss(b) depicts the count of fire alarm systems present at fire incident locations over time. It shows a gradual increase in the installation of fire alarms in buildings throughout the analyzed period, which reflects greater adherence to fire safety regulations and growing awareness of the importance of fire alarms in preventing fire-related damage. 
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
+In @fig-fireloss(c), similar to the fire alarm graph, this bar chart illustrates the frequency of sprinkler system presence at fire incident sites over the years. It shows a consistent increase in the use of sprinklers, suggesting that building owners are increasingly adopting these systems as a precautionary measure, further contributing to better fire containment outcomes. For @fig-fireloss(d), it presents the number of smoke alarms present at the location of fire incidents for each year. Like fire alarms and sprinklers, the trend indicates a rise in smoke alarm installations, which plays a crucial role in early fire detection and evacuation. As we can saw previously in @fig-fireloss, the number of fire incident has dropped significantly. Therefore, it is reasonable that all these variables is @fig-fireloss also decreases significantly without a clear evidents showing the alarm preventing systems.
 
 ```{r}
-sort(unique(data$status_of_fire_on_arrival))
+#| label: fig-fireloss
+#| fig-cap: Summaries of estimated loss and Systems in each year
+#| fig-subcap: ["Estimated Dollar Loss by year","Fire Alarm Presence Counts in each year","Sprinkler System Presence Counts in each year","Smoke Alarm Presence Counts in each year"]
+#| echo: false
+#| warning: false
+#| layout-ncol: 2
+#| layout-nrow: 2
+
+# Summarize estimated dollar loss by year
+yearly_loss <- 
+  data |>
+  group_by(year) |>
+  summarize(total_estimated_loss = sum(estimated_dollar_loss, na.rm = TRUE))
+
+# Create the plot
+ggplot(yearly_loss, aes(x = year, y = total_estimated_loss)) +
+  geom_bar(stat = "identity", fill = "steelblue") +  # Change to geom_line() for a line plot
+  labs(x = "Year", y = "Total Estimated Loss (in $)", title = "Total Estimated Loss by Year") +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(min(yearly_loss$year), max(yearly_loss$year), by = 1))
+
+# Summarize fire alarm system counts by year (only present systems)
+alarm_system_summary <- data %>%
+  filter(fire_alarm_system %in% c("System Presents", "Presents and Operated")) %>%
+  group_by(year) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  mutate(system_type = "Fire Alarm System")
+# Create the plot
+ggplot(alarm_system_summary, aes(x = year, y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Year", y = "Count of Fire Alarm Systems Present", title = "Fire Alarm Systems Presence by Year") +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(min(yearly_loss$year), max(yearly_loss$year), by = 1))
+
+# Summarize sprinkler system counts by year (only present systems)
+sprinkler_summary <- data %>%
+  filter(sprinkler_system %in% c("System Presents", "Presents and Operated")) %>%
+  group_by(year) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  mutate(system_type = "Sprinkler System")
+# Create the plot
+ggplot(sprinkler_summary, aes(x = year, y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Year", y = "Count of Sprinkler Systems Present", title = "Sprinkler Systems Presence by Year") +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(min(yearly_loss$year), max(yearly_loss$year), by = 1))
+
+# Summarize smoke alarm system counts by year (only present systems)
+smoke_alarm_summary <- data %>%
+  filter(smoke_alarm_at_fire_origin %in% c("System Presents", "Presents and Operated")) %>%
+  group_by(year) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  mutate(system_type = "Smoke Alarm System")
+# Create the plot
+ggplot(smoke_alarm_summary, aes(x = year, y = count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Year", y = "Count of Smoke Alarms Present", title = "Smoke Alarms Presence by Year") +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(min(yearly_loss$year), max(yearly_loss$year), by = 1))
 ```
+The boxplot @fig-boxplot(a) shows the distribution of estimated property losses in relation to whether fire alarm systems were present and whether they were operational. The chart reveals that buildings with fire alarm systems, especially those that were operational during a fire, had significantly lower property losses compared to buildings without these systems. This highlights the importance of functional fire alarms in mitigating the financial impact of fires.
+Similar to the fire alarm boxplot @fig-boxplt(b), this chart shows the impact of sprinkler systems on property loss. The data indicates that when sprinkler systems are present and operational, the estimated property losses are notably lower, emphasizing the role of sprinklers in fire suppression and minimizing damage.
+
+```{r}
+#| label: fig-boxplot
+#| fig-cap: "Boxplot of Fire Alarm and Sprinkler "
+#| echo: false
+#| fig-subcap: ["Fire Alarm System relate with loss", "Sprinkler System relate with loss"]
+#| layout-ncol: 2
+
+data |>
+  ggplot(mapping = aes(x = fire_alarm_system, y = estimated_dollar_loss)) +
+    geom_boxplot() +
+    labs(x = "Fire Alarm System", y = "Estimated Loss (in $)") +
+    theme_classic()
+
+ data |>
+  ggplot(mapping = aes(x = sprinkler_system, y = estimated_dollar_loss)) +
+    geom_boxplot() +
+    labs(x = "Fire Alarm System", y = "Estimated Loss (in $)") +
+    theme_classic()
+```    
 
 
 # Discussion {#sec-discussion}
 
-## First discussion point {#sec-first-point}
+The findings of this study highlight the essential role that fire safety systems play in mitigating fire incidents in urban environments. However, several limitations and potential mistakes in the data analysis process warrant deeper discussion. One notable issue is the reliance on data from the Ontario Fire Marshal, which may not account for all fire incidents or may have inconsistencies in reporting. For instance, some fire incidents could have been underreported, particularly those deemed minor or those occurring in remote locations where data collection is less rigorous. This could lead to an underrepresentation of the overall impact of fire safety systems on fire incidents in Toronto.
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+Moreover, while the study observed a general decline in the number of fire incidents and estimated property loss in recent years, it is crucial to consider external factors that could contribute to these trends. Changes in urban planning, such as the creation of fire lanes, improved building codes, or even public education initiatives about fire safety, could significantly influence the observed outcomes. The correlation between the presence of fire safety systems and reduced losses does not imply causation; further research is needed to isolate the impact of fire safety systems from other influencing variables.
 
-## Second discussion point
+Additionally, the methodology for identifying outliers in lead concentration values and the subsequent removal of data points might have inadvertently excluded relevant information. For instance, a small number of high-cost incidents may skew the average loss figures and obscure patterns that could provide insights into the effectiveness of fire safety measures. It is vital to assess whether such exclusions genuinely reflect inaccuracies in the data or if they remove potentially valuable case studies.
 
-## Third discussion point
+Improvements in future research could include a broader analysis of fire incidents by incorporating data from additional sources, such as local fire departments or insurance claims, to create a more comprehensive dataset. Furthermore, incorporating qualitative data through interviews with fire safety professionals or building managers could provide context to the quantitative findings, helping to understand the operational status of fire safety systems at the time of incidents.
+
+Lastly, investigating the effectiveness of specific fire safety measures across different types of structures—residential versus commercial, high-rise versus low-rise—could yield valuable insights into how best to allocate resources and prioritize regulations. Ultimately, the results of this study serve as a foundation for enhancing urban fire safety policies, but a more nuanced understanding of the factors influencing fire incidents is necessary to develop targeted interventions and improve community resilience to fire hazards.
 
 ## Weaknesses and next steps
+To enhance the robustness of future research, several steps can be taken:
 
-Weaknesses and next steps should also be included.
+1. **Data Enrichment**: Incorporating data from additional sources, such as local fire departments, insurance claims, or community surveys, would provide a more comprehensive view of fire incidents and safety systems. This would help capture a broader spectrum of incidents, including those that might not be documented by the Ontario Fire Marshal.
+
+2. **Qualitative Research**: Conducting interviews or focus groups with fire safety professionals, building managers, and residents could provide context to the quantitative findings. Understanding their experiences and perspectives would help identify best practices and areas for improvement in fire safety systems.
+
+3. **Longitudinal Studies**: Implementing a longitudinal study design would enable researchers to track changes over time, assessing how the introduction of new fire safety systems correlates with changes in incident rates and property loss. This would help clarify causal relationships and the impact of regulatory changes.
+
+4. **Targeted Analysis**: Future research should consider analyzing the effectiveness of fire safety measures across different building types (e.g., residential vs. commercial) and geographical areas. This approach could yield insights into how best to allocate resources and prioritize regulations based on the unique needs of various communities.
+
+5. **Exploration of Other Variables**: Investigating additional variables, such as response times of the fire services and the presence of community fire safety programs, could provide a more nuanced understanding of the factors influencing fire incident outcomes.
+
+In conclusion, while this study provides a valuable foundation for understanding the impact of fire safety systems on urban fire incidents, addressing these weaknesses and pursuing these next steps will further enhance our understanding and guide effective policy-making in urban fire safety.
 
 \newpage
 
