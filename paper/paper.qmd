@@ -1,9 +1,8 @@
 ---
 title: "Fire Safety Systems in Mitigating Fire Incidents"
-subtitle: "Assessing the Impact of Alarms and Sprinklers on Fire Containment, Evacuation, and Loss Reduction"
 author: 
   - Deyi Kong
-thanks: "Code and data are available at: https://open.toronto.ca/dataset/fire-incidents/"
+thanks: "Code and data are available at: https://github.com/eeeee-cmd/Toronto_Fire_System_Analysis.git"
 date: today
 date-format: long
 abstract: "This study investigates the role of fire safety systems, specifically fire alarms and sprinkler systems, in mitigating the effects of fire incidents across Toronto. By analyzing data from the Ontario Fire Marshal (OFM) dataset, we assess how these systems impact evacuation success, fire containment, and the reduction property loss. Our analysis demonstrates that fire safety systems significantly improve outcomes in fire incidents."
@@ -18,43 +17,100 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
+library(knitr)
 
 data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
 ```
 
 
 # Introduction
-Fire incidents are a persistent threat to urban safety, causing significant damage to property, loss of life, and injury. Fire safety systems, such as fire alarms and sprinklers, are fundamental components of fire prevention and response strategies in urban areas. These systems play a critical role in early detection, containment, and evacuation during fire incidents. Despite the presence of these systems, the extent to which they reduce the severity of fire-related outcomes varies, prompting a closer examination of their actual effectiveness.
+“It was like watching molten lava move through the building,” Aronson remembers. “Just a huge blob of fire that flowed and flowed” [@nytimes]. Fire incidents are a persistent threat to urban safety, causing significant damage to property, loss of life, and injury. Effective fire protection measures have played a crucial role in mitigating the impact of these incidents [@firesystemsnet]. Fire safety systems, such as fire alarms and sprinklers, are fundamental components of fire prevention and response strategies in urban areas. Most fatal fires occur at night when people are sleeping, a working smoke alarm will detect smoke and sound to alert you [@oafc]. Sprinkler systems are silent protectors against the threat of fires in buildings and spaces [@origincause]. These systems play a critical role in early detection, containment, and evacuation during fire incidents.
 
-This study focuses on analyzing data from Toronto's fire incidents to evaluate how fire alarms and sprinklers influence key outcomes such as property loss, fire containment, and evacuation success. Using data provided by the Ontario Fire Marshal (OFM), we examine variables such as the area of fire origin, ignition source, response times, and the presence of fire safety systems. By exploring these relationships, we aim to provide a clearer picture of how these systems contribute to minimizing the damage caused by fire incidents.
-
-We use @citeR and @opendatatoronto.
-
-The remainder of this paper is structured as follows. @sec-data comprehensively discusses the source, context, and structure of the data used, including detailed descriptions of the key variables analyzed. This section also includes tables and graphs to visualize the data. @sec-discussion interprets the results of our analysis, drawing conclusions about the impact of fire safety systems on fire incidents in Toronto. Based on our findings, we offer recommendations for improving fire safety practices and policies, particularly regarding the installation and maintenance of fire alarms and sprinkler systems.
-
+Toronto Fire Services is the City’s only all hazards emergency response organization with an emphasis on quality services, efficiency, effectiveness, and safety [@TFS]. This study focuses on analyzing data from Toronto's fire incidents to evaluate how fire alarms and sprinklers influence key outcomes such as property loss, fire containment, and evacuation success. Using data provided by the Ontario Fire Marshal (OFM), we examine variables such as the area of fire origin, ignition source, response times, and the presence of fire safety systems. By exploring these relationships, we aim to provide a clearer picture of how these systems contribute to minimizing the damage caused by fire incidents.
 
 
 # Data {#sec-data}
 
-The data used in this study is provided by the Toronto Fire Service (TFS) and aggregated by the Ontario Fire Marshal (OFM) from Janurary 1, 2011 to December 31, 2023. This dataset includes detailed information on fire incidents to which TFS responded, covering various aspects such as fire origin, alarm and sprinkler system operation, and financial loss. 
-Some of our data is of penguins (@fig-fire), from @opendatatoronto
+## Raw Data
+The data used in this paper is derived from Open Data Toronto and is read into this paper through the opendatatoronto library [@opendatatoronto]. All data were processed and analyzed using R [@citeR], associating with Libraries tidyverse [@tidyverse], janitor [@janitor], knitr [@knitr], dplyr [@dplyr], and lubridate [@lubridate]. Graphics were made using ggplot2 [@ggplot].
+
+Fire Incidents data used in the paper is provided by the Toronto Fire Service (TFS) and aggregated by the Ontario Fire Marshal (OFM) from Janurary 1, 2011 to December 31, 2023; covering 32000 observations of 43 variables. It tracks the date of the incident, the location to the nearest intersection, the ward in which the incident took place, the time TFS was alerted to the fire and the time TFS arrived at the scene. The dataset records the area of origin, building status, business impact, casualties, estimated dollar loss, time stamps for each actions (notified, arrived, controled), and whether there was a working alarm and sprinkler on site.
+
+For privacy purposes personal information is not provided and exact address have been aggregated to the nearest major or minor intersection. Some incidents have been excluded pursuant to exemptions under Section 8 of Municipal Freedom of Information and Protection of Privacy Act (MFIPPA). Incidents with incomplete data may be under investigation or is classified as a no loss outdoor fire.
+
+## Cleaned Data
+
+In the analysis, the data being utilized are within the time range of 2018 to 2023.
+There are several new feature created due to a more effective relation with the time stamps. TFS_duration variable measures the time spent by TFS to control the fire. TFS_Notified_Till_Arrival measures the time spent by TFS to get to the incident once received the alarm. Here is a quick look of the dataset:
+
+```{r}
+#| echo: false
+#| tbl-cap: "Column descriptions of selected data"
+glimpse(data)
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| label: tbl-column
+#| tbl-cap: "Column descriptions of selected data"
+
+# Generate a table to display columns and description
+description_table <- tibble(
+  Variable = c("area_of_origin", "estimated_dollar_loss", "final_incident_type", "fire_alarm_system_impact_on_evacuation", "fire_alarm_system_presence", "ignition_source", "smoke_alarm_impact_on_persons_evacuating_impact_on_evacuation", "sprinkler_system_presence", "status_of_fire_on_arrival", "fire_under_control_time", "tfs_alarm_time", "tfs_arrival_time"),
+  Description = c(
+    "OFM Area of Origin code and description",
+    "Estimated Dollar Loss",
+    "Final incident type",
+    "OFM Fire Alarm System Impact on Evacuation code and description",
+    "OFM Fire Alarm System Presence code and description",
+    "OFM Ignition Source code and description",
+    "OFM Smoke Alarm Impact on Persons Evacuating Impact on Evacuation code and description",
+    "OFM Sprinkler System Presence code and description",
+    "OFM Status of Fire On Arrival code and description",
+    "Timestamp of fire under control",
+    "Timestamp of when TFS was notified of the incident",
+    "Timestamp of first arriving unit to incident"
+  )
+)
+
+kable(description_table, col.names = c("Variables", "Descriptions"))
+```
 
 ```{r}
 #| label: fig-fire
-#| fig-cap: Bills of penguins
+#| fig-cap: Distribution of incidents in each year by fire status
 #| echo: false
 
 data |> 
-  ggplot(aes(x = TFS_Duration, y = estimated_dollar_loss)) +
-  geom_point()
-
+  ggplot(mapping = aes(x = year, fill = status_of_fire_on_arrival)) +
+  geom_bar() +
+  labs(x = "Year", y = "Number of Fire Incidents", fill = "Fire Status when Arrived") +
+  # Ensure all years are shown
+  scale_x_continuous(breaks = seq(min(data$year, na.rm = TRUE), max(data$year, na.rm = TRUE), by = 1)) + 
+  # Shorten descriptions
+  scale_fill_discrete(labels = c(
+                      "Extinguished",     # 1
+                      "No Evidence",      # 2
+                      "Smoke Only",       # 3
+                      "Small Flames",     # 4
+                      "Large Flames",     # 5
+                      "Fully Involved",   # 7
+                      "Exposure",         # 8
+                      "Unclassified"      # 9
+                      )) +  
+  theme(legend.position = "bottom",
+  legend.key.size = unit(0.1, 'cm')               # Adjust legend key size
+  )
 ```
 
-Still working on the rest of paper.....
 
 And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
 
+```{r}
+sort(unique(data$status_of_fire_on_arrival))
+```
 
 
 # Discussion {#sec-discussion}
